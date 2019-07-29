@@ -272,6 +272,8 @@ void NGLScene::paintGL()
       m_testVao->unbind();*/
 
       (*shader)["ForestShader"]->use();
+      shader->setUniform("MVP",MVP);
+
       std::vector<std::vector<std::vector<std::vector<ngl::Mat4>>>> &outputCache = m_forest.m_outputCache;
       for(size_t id=0; id<outputCache.size(); id++)
       {
@@ -290,6 +292,11 @@ void NGLScene::paintGL()
                          sizeof(ngl::Mat4)*static_cast<GLsizeiptr>(transforms.size()),
                          &transforms[0],
                          GL_STATIC_DRAW);
+
+            glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(2);
+            glEnableVertexAttribArray(3);
+            glEnableVertexAttribArray(4);
 
             glVertexAttribPointer(1,4,GL_FLOAT,false,64,
                                   static_cast<ngl::Real *>(NULL));
