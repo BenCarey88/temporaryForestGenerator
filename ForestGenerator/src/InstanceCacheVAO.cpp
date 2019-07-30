@@ -17,8 +17,6 @@ namespace ngl
     {
       msg->addWarning("Warning trying to draw an unbound VOA");
     }
-    //glDrawElements(m_mode,static_cast<GLsizei>(m_indicesCount),m_indexType,static_cast<GLvoid *>(nullptr));
-
     glDrawElementsInstanced(m_mode,
                             static_cast<GLsizei>(m_indicesCount),
                             m_indexType,

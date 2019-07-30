@@ -104,8 +104,8 @@ public:
 
   std::vector<OutputData> m_output;
   //outputData arranged to mimic the instanceCache
-  //separate by: id/age/innerIndex/different-branches-using-the-same-instance
-  std::vector<std::vector<std::vector<std::vector<ngl::Mat4>>>> m_outputCache;
+  //separate by: treeType/id/age/innerIndex/different-branches-using-the-same-instance
+  std::vector<std::vector<std::vector<std::vector<std::vector<ngl::Mat4>>>>> m_outputCache;
 
   //the random number generator
   std::default_random_engine m_gen;
