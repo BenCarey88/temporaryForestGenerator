@@ -38,15 +38,7 @@ void Forest::resizeOutputCache()
   m_outputCache.resize(m_treeTypes.size());
   for(size_t t=0; t<m_treeTypes.size(); t++)
   {
-    m_outputCache[t].resize(m_treeTypes[t].m_instanceCache.size(),{});
-    for(size_t id=0; id<m_treeTypes[t].m_instanceCache.size(); id++)
-    {
-      m_outputCache[t][id].resize(size_t(m_treeTypes[t].m_instanceCache[id].size()),{});
-      for(size_t age=0; age<m_treeTypes[t].m_instanceCache[id].size(); age++)
-      {
-        m_outputCache[t][id][age].resize(size_t(m_treeTypes[t].m_instanceCache[id][age].size()),{});
-      }
-    }
+    m_outputCache[t].resizeCache(m_treeTypes[t].m_instanceCache);
   }
 }
 
@@ -96,15 +88,15 @@ void Forest::scatterForest()
 void Forest::createTree(size_t _treeType, ngl::Mat4 _transform, size_t _id, size_t _age)
 {
   LSystem &treeType = m_treeTypes[_treeType];
-  size_t size = treeType.m_instanceCache.at(_id).at(_age).size();
+  size_t size = treeType.m_instanceCache.numInstancesAt(_id,_age);
   if(size>0)
   {
     size_t innerIndex = 0;
     Instance * instance = getInstance(treeType, _id, _age, innerIndex);
     ngl::Mat4 T = _transform * instance->m_transform.inverse();
     m_output.push_back(OutputData(T, _treeType, _id, _age, innerIndex));
-    m_outputCache.at(_treeType).at(_id).at(_age).at(innerIndex).push_back(T);
-
+    std::vector<ngl::Mat4> * transforms = m_outputCache[_treeType].getElement(_id,_age,innerIndex);
+    transforms->push_back(T);
     for(size_t i=0; i<instance->m_exitPoints.size(); i++)
     {
       size_t newAge = instance->m_exitPoints[i].m_exitAge;
@@ -122,10 +114,10 @@ void Forest::createTree(size_t _treeType, ngl::Mat4 _transform, size_t _id, size
 
 Instance * Forest::getInstance(LSystem &_treeType, size_t _id, size_t _age, size_t &_innerIndex)
 {
-  size_t size = _treeType.m_instanceCache.at(_id).at(_age).size();
+  size_t size = _treeType.m_instanceCache.numInstancesAt(_id,_age);
   std::uniform_int_distribution<size_t> dist(0,size-1);
   _innerIndex = dist(m_gen);
-  return &_treeType.m_instanceCache.at(_id).at(_age).at(_innerIndex);
+  return _treeType.m_instanceCache.getElement(_id,_age,_innerIndex);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

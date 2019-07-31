@@ -200,10 +200,10 @@ void LSystem::createGeometry()
 
         instance = Instance(transform);
         instance.m_instanceStart = indices->size();//&(indices->back()); //except maybe should be &(indices->back())+1?
-        if(m_instanceCache[id][age].size()<=size_t(m_maxInstancePerLevel/(age+1)))
+        if(m_instanceCache.numInstancesAt(id,age)<=size_t(m_maxInstancePerLevel/(age+1)))
         {
-          m_instanceCache[id][age].push_back(instance);
-          currentInstance = &m_instanceCache[id][age].back();
+          m_instanceCache.pushBackElement(id, age, instance);
+          currentInstance = m_instanceCache.getLastElementAt(id,age);
         }
         else
         {
@@ -244,12 +244,12 @@ void LSystem::createGeometry()
           instance->m_exitPoints.push_back(Instance::ExitPoint(id, age, instance->m_transform.inverse()*transform));
         }
 
-        if(m_instanceCache[id][age].size()==0)
+        if(m_instanceCache.numInstancesAt(id,age)==0)
         {
           instance = Instance(transform);
           instance.m_instanceStart = indices->size();//&(indices->back());
-          m_instanceCache[id][age].push_back(instance);
-          currentInstance = &m_instanceCache[id][age].back();
+          m_instanceCache.pushBackElement(id, age, instance);
+          currentInstance = m_instanceCache.getLastElementAt(id, age);
           savedInstance.push_back(currentInstance);
         }
         else

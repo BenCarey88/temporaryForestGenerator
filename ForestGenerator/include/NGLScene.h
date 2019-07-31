@@ -196,10 +196,13 @@ protected:
   //second layer separates within a cache by id
   //third layer separates by age
   //inner index corresponds to different instances of a given age and id
-  std::vector<std::vector<std::vector<std::vector<std::unique_ptr<ngl::AbstractVAO>>>>> m_instanceCacheVAOs;
+  //std::vector<std::vector<std::vector<std::vector<std::unique_ptr<ngl::AbstractVAO>>>>> m_instanceCacheVAOs;
+
+  std::vector<CacheStructure<std::unique_ptr<ngl::AbstractVAO>>> m_instanceCacheVAOs;
 
   //as above: separated by treeType/id/age/innerIndex
-  std::vector<std::vector<std::vector<std::vector<GLuint>>>> m_bufferIds;
+  //std::vector<std::vector<std::vector<std::vector<GLuint>>>> m_bufferIds;
+  std::vector<CacheStructure<GLuint>> m_bufferIds;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the forest object to be sent to the renderer
@@ -261,7 +264,29 @@ protected:
   void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao);
 
   std::unique_ptr<ngl::AbstractVAO> m_testVao;
-  void buildTestVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount);
+  //void buildTestVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount);
+
+  //Functor buildTestVAO
+  class buildTestVAO
+  {
+  public:
+    buildTestVAO(LSystem &_treeType, CacheStructure<std::vector<ngl::Mat4>> &_outputCacheData);
+    LSystem m_treeType;
+    CacheStructure<std::vector<ngl::Mat4>> m_outputCacheData;
+
+    void operator () (std::unique_ptr<ngl::AbstractVAO> &_vao, size_t &_id, size_t &_age, size_t &_innerIndex);
+  };
+
+  //Functor drawInstanceVAO
+  class drawInstanceVAO
+  {
+  public:
+    drawInstanceVAO(CacheStructure<std::vector<ngl::Mat4>> &_outputCacheData, CacheStructure<GLuint> &_bufferIds);
+    CacheStructure<std::vector<ngl::Mat4>> m_outputCacheData;
+    CacheStructure<GLuint> m_bufferIds;
+
+    void operator () (std::unique_ptr<ngl::AbstractVAO> &_vao, size_t &_id, size_t &_age, size_t &_innerIndex);
+  };
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

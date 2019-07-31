@@ -6,21 +6,9 @@
 #include <QApplication>
 #include "MainWindow.h"
 
-template<class T>
-void func ( void (*f)(T) )
-{
-  (*f)("TEST\n");
-}
-void newPrint(std::string _s)
-{
-  std::cout<<_s;
-}
 
 int main(int argc, char **argv)
 {
-  func<std::string>(newPrint);
-
-
   // create an OpenGL format specifier
   QSurfaceFormat format;
   // set the number of samples for multisampling

@@ -121,23 +121,11 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
 
 //----------------------------------------------------------------------------------------------------------------------
 
-void LSystem::resizeInstanceCache()
-{
-
-  m_instanceCache.resize(m_branches.size(),{});
-  for(auto &vector : m_instanceCache)
-  {
-    vector.resize(size_t(m_generation+1),{});
-  }
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-
 void LSystem::fillInstanceCache(int _numHeroTrees)
 {
   seedRandomEngine();
   addInstancingCommands();
-  resizeInstanceCache();
+  m_instanceCache.resizeCache(m_branches.size(), size_t(m_generation));
 
   m_forestMode = true;
   m_heroIndices = {};
